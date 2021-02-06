@@ -12,7 +12,7 @@ public class MainForm extends JFrame implements ILogThings {
     JPanel basePanel, botPanel, textPanel, topPanel, playerHand, dealerHand, valuePanel;
     JLabel playerValue, dealerValue, winLabel;
     JTextArea logArea;
-    Button hitButton, stayButton, newGameButton;
+    JButton hitButton, stayButton, newGameButton;
 
     public MainForm() {
         super("blackjacks");
@@ -44,16 +44,20 @@ public class MainForm extends JFrame implements ILogThings {
         topPanel.add(Box.createHorizontalGlue());
         topPanel.add(dealerHand);
 
-        hitButton = new Button("Hit");
-        stayButton = new Button("Stay");
-        newGameButton = new Button("New Game");
+        hitButton = new JButton("Hit");
+        hitButton.setMnemonic('H');
+        stayButton = new JButton("Stay");
+        stayButton.setMnemonic('S');
+        newGameButton = new JButton("New Game");
+        newGameButton.setMnemonic('N');
 
         botPanel.add(hitButton);
         botPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         botPanel.add(stayButton);
         botPanel.add(Box.createRigidArea(new Dimension(15, 0)));
         botPanel.add(newGameButton);
-        botPanel.add(Box.createRigidArea(new Dimension(15, 0)));
+        botPanel.add(Box.createHorizontalGlue());
+
 
         playerValue = new JLabel("Value: ");
         dealerValue = new JLabel("Value: ");
