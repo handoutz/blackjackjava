@@ -17,6 +17,7 @@ public class GameState {
         PLAYING("", Color.GREEN),
         WIN("Player win", Color.GREEN),
         DEALER_BUST("Dealer bust. Player wins!", Color.GREEN),
+        BLACKJACK("Blackjack!", Color.GREEN),
         DEALER_WIN("Dealer wins!", Color.red),
         PUSH("Push", Color.yellow),
         PLAYER_BUST("You busted!", Color.red);
