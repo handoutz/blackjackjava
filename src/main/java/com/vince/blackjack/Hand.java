@@ -35,6 +35,14 @@ public class Hand {
         }
     }
 
+    public boolean hasCardName(String card) {
+        return cards.stream().anyMatch(c -> c.getName().equalsIgnoreCase(card));
+    }
+
+    public boolean isBlackJack() {
+        return hasCardName("a") && (hasCardName("j") || hasCardName("q") || hasCardName("k"));
+    }
+
     public void add(Card c) {
         cards.add(c);
     }

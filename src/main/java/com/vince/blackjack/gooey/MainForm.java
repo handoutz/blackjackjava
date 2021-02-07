@@ -6,6 +6,7 @@ import com.vince.blackjack.Hand;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class MainForm extends JFrame implements ILogThings {
     GameState state;
@@ -45,11 +46,11 @@ public class MainForm extends JFrame implements ILogThings {
         topPanel.add(dealerHand);
 
         hitButton = new JButton("Hit");
-        hitButton.setMnemonic('H');
+        //hitButton.setMnemonic('H');
         stayButton = new JButton("Stay");
-        stayButton.setMnemonic('S');
+        //stayButton.setMnemonic('S');
         newGameButton = new JButton("New Game");
-        newGameButton.setMnemonic('N');
+        //newGameButton.setMnemonic('N');
 
         botPanel.add(hitButton);
         botPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -72,16 +73,19 @@ public class MainForm extends JFrame implements ILogThings {
         basePanel.add(topPanel);
         basePanel.add(valuePanel);
         basePanel.add(Box.createVerticalStrut(20));
+        basePanel.add(botPanel);
         basePanel.add(Box.createVerticalGlue());
         basePanel.add(textPanel);
         basePanel.add(Box.createVerticalGlue());
-        basePanel.add(botPanel);
         basePanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(600, 800);
 
         logArea = new JTextArea();
+        logArea.setEnabled(false);
+        logArea.setForeground(Color.white);
+        logArea.setBackground(Color.black);
         //logArea.setSize(600, 800);
 
         textPanel.add(logArea);
@@ -90,14 +94,39 @@ public class MainForm extends JFrame implements ILogThings {
         hitButton.addActionListener(this::hitButton_hit);
         stayButton.addActionListener(this::stayButton_hit);
         newGameButton.addActionListener(this::newGameButton_hit);
-        state.setOnHit(this::stateHit);
-        state.setOnStand(this::stateStand);
-        state.setOnReset(this::stateStand);
-        state.setOnHandUpdate(this::onHandUpdate);
-        state.setOnStateReset(this::stateReset);
-        state.setOnStateChange(this::stateChanged);
+        state.onHit.subscribe(this::stateHit);
+        state.onStand.subscribe(this::stateStand);
+        state.onReset.subscribe(this::stateReset);
+        state.onHandUpdate.subscribe(this::onHandUpdate);
+        state.onStateReset.subscribe(this::stateReset);
+        state.onStateChange.subscribe(this::stateChanged);
+        
+        var kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        //kfm.addKeyEventPostProcessor(this::onKeySomething);
+        kfm.addKeyEventDispatcher(this::onKeySomething);
+
+        setFocusable(true);
+        this.requestFocus();
 
         newGameButton_hit(null);
+    }
+
+    private boolean onKeySomething(KeyEvent e) {
+        if(e.getID() != KeyEvent.KEY_RELEASED)
+            return false;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_H:
+                hitButton_hit(null);
+                return true;
+            case KeyEvent.VK_S:
+                stayButton_hit(null);
+                return true;
+            case KeyEvent.VK_N:
+                newGameButton_hit(null);
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void stateChanged(GameState.State s) {
@@ -143,11 +172,13 @@ public class MainForm extends JFrame implements ILogThings {
     }
 
     private void hitButton_hit(ActionEvent e) {
-        state.hit();
+        if (hitButton.isEnabled())
+            state.hit();
     }
 
     private void stayButton_hit(ActionEvent e) {
-        state.stand();
+        if (stayButton.isEnabled())
+            state.stand();
     }
 
     private void newGameButton_hit(ActionEvent e) {

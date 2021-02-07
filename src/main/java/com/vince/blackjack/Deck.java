@@ -1,5 +1,6 @@
 package com.vince.blackjack;
 
+import com.vince.blackjack.gooey.ILogThings;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -13,9 +14,11 @@ import java.util.stream.Stream;
 @Data
 public class Deck {
     private List<Card> cards;
+    private ILogThings ctx;
 
-    public Deck() {
+    public Deck(ILogThings c) {
         cards = new ArrayList<Card>();
+        ctx = c;
         reset();
     }
 
@@ -38,11 +41,17 @@ public class Deck {
     }
 
     public Card nextCard() {
+        if (cards.size() == 0) {
+            ctx.logln("ran out of cards. new deck!");
+            reset();
+        }
         return cards.remove(0);
     }
 
-    public void reset(){
+    public void reset() {
         cards.clear();
+        addDeck();
+        addDeck();
         addDeck();
         shuffle(30);
     }

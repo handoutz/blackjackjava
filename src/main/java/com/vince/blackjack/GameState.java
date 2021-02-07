@@ -1,5 +1,6 @@
 package com.vince.blackjack;
 
+import com.vince.blackjack.events.EventHandler;
 import com.vince.blackjack.gooey.ILogThings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,14 @@ public class GameState {
             this.description = desc;
             this.color = col;
         }
+
+        public boolean isPlayerLoss() {
+            return this == DEALER_WIN || this == PLAYER_BUST;
+        }
+
+        public boolean isPlayerWin() {
+            return this == WIN || this == BLACKJACK || this == PUSH || this == DEALER_BUST;
+        }
     }
 
     private Deck deck;
@@ -36,17 +45,25 @@ public class GameState {
     private ILogThings ctx;
 
 
-    private Consumer<GameState> onHit;
-    private Consumer<GameState> onStand;
-    private Consumer<GameState> onHandUpdate;
-    private Consumer<GameState> onReset;
-    private Consumer<GameState> onStateReset;
-    private Consumer<State> onStateChange;
+    public EventHandler<GameState> onHit;
+    public EventHandler<GameState> onStand;
+    public EventHandler<GameState> onHandUpdate;
+    public EventHandler<GameState> onReset;
+    public EventHandler<GameState> onStateReset;
+    public EventHandler<State> onStateChange;
 
+    private State currentState;
 
     public GameState(ILogThings c) {
         ctx = c;
-        deck = new Deck();
+        onHit = new EventHandler<>();
+        onStand = new EventHandler<>();
+        onHandUpdate = new EventHandler<>();
+        onReset = new EventHandler<>();
+        onStateReset = new EventHandler<>();
+        onStateChange = new EventHandler<>();
+        deck = new Deck(c);
+        currentState = State.PLAYING;
         reset();
     }
 
@@ -56,14 +73,13 @@ public class GameState {
         playerHand = new Hand(ctx);
         dealerHand = new Hand(ctx);
 
-        if (onStateReset != null)
-            onStateReset.accept(this);
+        onStateReset.accept(this);
         setState(State.PLAYING);
     }
 
     public void setState(State s) {
-        if (onStateChange != null)
-            onStateChange.accept(s);
+        currentState = s;
+        onStateChange.accept(s);
     }
 
     public void deal() {
@@ -77,25 +93,37 @@ public class GameState {
 
         onHandUpdate.accept(this);
         setState(State.PLAYING);
+
+        if (playerHand.isBlackJack()) {
+            setState(State.BLACKJACK);
+            stand();
+            return;
+        }
+        if (dealerHand.isBlackJack()) {
+            setState(State.DEALER_WIN);
+            stand();
+        }
     }
 
     public void printState() {
-        ctx.logln(" --- Dealer ---");
+        /*ctx.logln(" --- Dealer ---");
         dealerHand.print();
 
         ctx.logln();
         ctx.logln(" --- Player ---");
-        playerHand.print();
+        playerHand.print();*/
     }
 
     public boolean hit() {
-        playerHand.add(deck.nextCard());
+        var next = deck.nextCard();
+        playerHand.add(next);
+        ctx.logln("You drew a %s".formatted(next.getName()));
         onHandUpdate.accept(this);
         onHit.accept(this);
         if (playerHand.isBust()) {
             ctx.logln("BUSTED!");
-            stand();
             setState(State.PLAYER_BUST);
+            stand();
             return false;
         }
         return true;
@@ -104,6 +132,15 @@ public class GameState {
     public void stand() {
         dealerHand.flipAllUp();
         onHandUpdate.accept(this);
+        if (currentState.isPlayerLoss()) {
+            setState(State.DEALER_WIN);
+            return;
+        }
+        if (currentState == State.BLACKJACK) {
+            setState(State.BLACKJACK);
+            ctx.logln("you win!");
+            return;
+        }
         while (dealerHand.value() < 17) {
             dealerHand.add(deck.nextCard());
             onHandUpdate.accept(this);
