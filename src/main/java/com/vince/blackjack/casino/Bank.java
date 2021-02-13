@@ -44,6 +44,12 @@ public class Bank {
         addChip(new Chip(val));
     }
 
+    public void addNewChip(ChipValue val, int ct) {
+        for (int i = 0; i < ct; i++) {
+            addChip(new Chip(val));
+        }
+    }
+
     public boolean removeChip(Chip chip) {
         //if(chips.contains(chip)) chips.removeIf(c -> c.getId() == chip.getId());
         var res = chips.remove(chip);

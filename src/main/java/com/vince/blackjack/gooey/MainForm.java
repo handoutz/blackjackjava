@@ -2,6 +2,8 @@ package com.vince.blackjack.gooey;
 
 import com.vince.blackjack.GameState;
 import com.vince.blackjack.Hand;
+import com.vince.blackjack.casino.Bank;
+import com.vince.blackjack.casino.Casino;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +12,13 @@ import java.awt.event.KeyEvent;
 
 public class MainForm extends JFrame implements ILogThings {
     GameState state;
+    Casino casino;
+
     JPanel basePanel, botPanel, textPanel, topPanel, playerHand, dealerHand, valuePanel;
     JLabel playerValue, dealerValue, winLabel;
     JTextArea logArea;
     JButton hitButton, stayButton, newGameButton;
+    CasinoPanel casinoPanel;
 
     public MainForm() {
         super("blackjacks");
@@ -32,12 +37,15 @@ public class MainForm extends JFrame implements ILogThings {
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.Y_AXIS));
         add(basePanel);
 
-        botPanel = createPanel(BoxLayout.Y_AXIS);
+        botPanel = createPanel(BoxLayout.X_AXIS);
         textPanel = createPanel(BoxLayout.Y_AXIS);
         topPanel = createPanel(BoxLayout.X_AXIS);
         playerHand = createPanel(BoxLayout.X_AXIS);
         dealerHand = createPanel(BoxLayout.X_AXIS);
         valuePanel = createPanel(BoxLayout.X_AXIS);
+        casinoPanel = new CasinoPanel();
+        casinoPanel.setAlignmentX(1f);
+        casinoPanel.setLayout(new BoxLayout(casinoPanel, BoxLayout.Y_AXIS));
 
         dealerHand.setAlignmentX(-1f);
 
@@ -75,6 +83,8 @@ public class MainForm extends JFrame implements ILogThings {
         basePanel.add(Box.createVerticalStrut(20));
         basePanel.add(botPanel);
         basePanel.add(Box.createVerticalGlue());
+        basePanel.add(casinoPanel);
+        basePanel.add(Box.createVerticalGlue());
         basePanel.add(textPanel);
         basePanel.add(Box.createVerticalGlue());
         basePanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -90,7 +100,11 @@ public class MainForm extends JFrame implements ILogThings {
 
         textPanel.add(logArea);
         setVisible(true);
+
         state = new GameState(this);
+        casino = new Casino(state, this);
+        setupCasino();
+
         hitButton.addActionListener(this::hitButton_hit);
         stayButton.addActionListener(this::stayButton_hit);
         newGameButton.addActionListener(this::newGameButton_hit);
@@ -100,7 +114,7 @@ public class MainForm extends JFrame implements ILogThings {
         state.onHandUpdate.subscribe(this::onHandUpdate);
         state.onStateReset.subscribe(this::stateReset);
         state.onStateChange.subscribe(this::stateChanged);
-        
+
         var kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         //kfm.addKeyEventPostProcessor(this::onKeySomething);
         kfm.addKeyEventDispatcher(this::onKeySomething);
@@ -111,8 +125,12 @@ public class MainForm extends JFrame implements ILogThings {
         newGameButton_hit(null);
     }
 
+    private void setupCasino() {
+        casinoPanel.setCasino(casino);
+    }
+
     private boolean onKeySomething(KeyEvent e) {
-        if(e.getID() != KeyEvent.KEY_RELEASED)
+        if (e.getID() != KeyEvent.KEY_RELEASED)
             return false;
         switch (e.getKeyCode()) {
             case KeyEvent.VK_H:
@@ -188,6 +206,7 @@ public class MainForm extends JFrame implements ILogThings {
     }
 
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl","True");
         var frm = new MainForm();
 
     }

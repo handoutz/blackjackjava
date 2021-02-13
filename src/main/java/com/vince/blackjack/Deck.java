@@ -38,6 +38,7 @@ public class Deck {
             numbered.add(Card.builder().suite(suite).name("A").value(11).build());
             cards.addAll(numbered);
         }
+        shuffle();
     }
 
     public Card nextCard() {
