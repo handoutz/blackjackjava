@@ -23,6 +23,7 @@ public class GameFrame extends JFrame {
     }
 
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "true");
         var frame = new GameFrame(1024, 1024);
     }
 }

@@ -29,7 +29,7 @@ public class GameEngine {
         while (true) {
             onFrame.acceptFrame(frame++, this);
             try {
-                Thread.sleep(100);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -32,8 +32,8 @@ public abstract class DrawLayer implements FrameListener {
 
     @Override
     public void acceptFrame(int frameNum, GameEngine engine) {
-        drawables.stream().filter(d -> d instanceof Actor).forEach(d -> {
-            ((Actor) d).acceptFrame(frameNum, engine);
+        drawables.stream().forEach(d -> {
+            d.acceptFrame(frameNum, engine);
         });
     }
 }

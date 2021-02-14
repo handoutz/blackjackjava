@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.awt.*;
 
 @Getter
-public abstract class Drawable {
+public abstract class Drawable implements FrameListener {
     public Drawable(int x, int y, int width, int height) {
         this.width = width;
         this.height = height;
