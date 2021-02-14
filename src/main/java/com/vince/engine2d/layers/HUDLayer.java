@@ -1,5 +1,6 @@
 package com.vince.engine2d.layers;
 
+import com.vince.engine2d.GameEngine;
 import com.vince.engine2d.layers.hud.TextArea;
 
 import java.awt.*;
@@ -19,5 +20,10 @@ public class HUDLayer extends DrawLayer {
         super.draw(g);
         g.setColor(Color.yellow);
         g.drawString("hello, world", 0, getHeight() / 2);
+    }
+
+    @Override
+    public void acceptFrame(int frameNum, GameEngine engine) {
+        super.acceptFrame(frameNum, engine);
     }
 }

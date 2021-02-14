@@ -1,5 +1,7 @@
 package com.vince.engine2d.layers;
 
+import com.vince.engine2d.GameEngine;
+
 import java.awt.*;
 
 public class BackLayer extends DrawLayer {
@@ -11,5 +13,10 @@ public class BackLayer extends DrawLayer {
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    @Override
+    public void acceptFrame(int frameNum, GameEngine engine) {
+        super.acceptFrame(frameNum, engine);
     }
 }

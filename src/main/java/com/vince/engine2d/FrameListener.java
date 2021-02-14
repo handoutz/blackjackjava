@@ -1,6 +1,5 @@
 package com.vince.engine2d;
 
-@FunctionalInterface
 public interface FrameListener {
-    void accept(int frameNum);
+    void acceptFrame(int frameNum, GameEngine engine);
 }
