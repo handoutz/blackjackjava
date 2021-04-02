@@ -18,7 +18,7 @@ public class HUDLayer extends DrawLayer {
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);
-        g.setColor(Color.yellow);
+        g.setColor(Color.blue);
         g.drawString("hello, world", 0, getHeight() / 2);
     }
 
