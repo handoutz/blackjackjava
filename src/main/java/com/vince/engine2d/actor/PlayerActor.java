@@ -23,7 +23,7 @@ public class PlayerActor extends Actor {
     }
 
     @Override
-    public void acceptFrame(int frameNum, GameEngine engine) {
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
         var phys = new PhysicsFrame(getPosition().getX(), getPosition().getY(), layer.getCurrentLevelImage());
         phys.applyGravity();
         int xChange = 0, yChange = 0;
@@ -48,7 +48,7 @@ public class PlayerActor extends Actor {
             }
 
         }
-        
+
         events.clear();
         setXPosition(phys.getCurX());
         setYPosition(phys.getCurY());

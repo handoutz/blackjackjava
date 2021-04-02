@@ -49,9 +49,9 @@ public class HardwareCanvas extends Canvas implements FrameListener {
     }
 
     @Override
-    public void acceptFrame(int frameNum, GameEngine engine) {
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
         for(var layer : layers){
-            layer.acceptFrame(frameNum, engine);
+            layer.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
         }
         repaint();
     }

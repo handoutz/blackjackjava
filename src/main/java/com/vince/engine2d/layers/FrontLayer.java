@@ -49,7 +49,7 @@ public class FrontLayer extends DrawLayer {
     }
 
     @Override
-    public void acceptFrame(int frameNum, GameEngine engine) {
-        super.acceptFrame(frameNum, engine);
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
+        super.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
     }
 }

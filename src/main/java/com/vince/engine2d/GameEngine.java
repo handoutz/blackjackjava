@@ -26,8 +26,12 @@ public class GameEngine {
     }
 
     private void runLoop() {
+        var start = System.currentTimeMillis();
+        var lastFrameTime = 0L;
         while (true) {
-            onFrame.acceptFrame(frame++, this);
+            var now = System.currentTimeMillis();
+            onFrame.acceptFrame(frame++, this, now - start, now - lastFrameTime);
+            lastFrameTime = now;
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {

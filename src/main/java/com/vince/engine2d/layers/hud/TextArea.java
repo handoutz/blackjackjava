@@ -41,7 +41,7 @@ public class TextArea extends Drawable {
     private double fps = 0.0;
 
     @Override
-    public void acceptFrame(int frameNum, GameEngine engine) {
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
         lastSecondFrames++;
         var curTime = System.currentTimeMillis();
         if(startTime==0)

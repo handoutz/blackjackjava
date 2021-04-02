@@ -3,7 +3,6 @@ package com.vince.engine2d.layers;
 import com.vince.engine2d.Drawable;
 import com.vince.engine2d.FrameListener;
 import com.vince.engine2d.GameEngine;
-import com.vince.engine2d.actor.Actor;
 import lombok.Getter;
 
 import java.awt.*;
@@ -31,9 +30,9 @@ public abstract class DrawLayer implements FrameListener {
     }
 
     @Override
-    public void acceptFrame(int frameNum, GameEngine engine) {
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
         drawables.stream().forEach(d -> {
-            d.acceptFrame(frameNum, engine);
+            d.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
         });
     }
 }
