@@ -6,6 +6,7 @@ import com.vince.engine2d.layers.FrontLayer;
 import com.vince.engine2d.layers.HUDLayer;
 import lombok.Getter;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -50,9 +51,11 @@ public class HardwareCanvas extends Canvas implements FrameListener {
 
     @Override
     public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
-        for(var layer : layers){
+        for (var layer : layers) {
             layer.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
         }
-        repaint();
+        var graph = getGraphics();
+        if (graph != null)
+            paint(graph);
     }
 }

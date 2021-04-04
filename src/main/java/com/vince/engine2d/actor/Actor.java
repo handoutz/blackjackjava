@@ -40,6 +40,10 @@ public abstract class Actor extends Drawable implements FrameListener {
         actions.removeIf(a -> a.getId().equals(id));
     }
 
+    public ExpiringAction getActionById(String id){
+        return actions.stream().filter(a->a.getId().equals(id)).findFirst().get();
+    }
+
     public void addAction(ExpiringAction act) {
         if (actions.stream().noneMatch(a -> act.getId().equals(a.getId()))) {
             actions.add(act);

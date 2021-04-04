@@ -39,7 +39,10 @@ public class PlayerActor extends Actor {
                         //xChange += changeAmount;
                         break;
                     case KeyEvent.VK_UP:
-                        addAction(new MovementAction(1000, timeMs, 0, -changeAmount*3, "up"));
+                        //only jump if we're near the ground
+                        if (!phys.canMoveTo(phys.getCurX(), phys.getCurY() + 5)) {
+                            addAction(new MovementAction(1000, timeMs, 0, -changeAmount * 3, "up"));
+                        }
                         //yChange -= changeAmount;
                         break;
                     case KeyEvent.VK_DOWN:
@@ -56,6 +59,10 @@ public class PlayerActor extends Actor {
                         removeActionsById("right");
                         break;
                     case KeyEvent.VK_UP:
+                        var oldAction = getActionById("up");
+                        if(oldAction.timeLeft(timeMs) > 500)
+                            oldAction.setDuration(500);
+                        else
                         removeActionsById("up");
                         //yChange -= changeAmount;
                         break;
