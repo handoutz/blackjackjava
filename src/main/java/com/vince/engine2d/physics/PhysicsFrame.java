@@ -15,8 +15,8 @@ public class PhysicsFrame {
 
     public PhysicsFrame(int x, int y, BufferedImage img, int width, int height) {
         this.physMap = img;
-        this.curX = x + width;
-        this.curY = y + height;
+        this.curX = x;
+        this.curY = y;
         this.width = width;
         this.height = height;
     }
@@ -38,22 +38,22 @@ public class PhysicsFrame {
     }
 
     public void applyX(int x) {
-        if (canMoveTo(curX + x, curY)) {
+        if (canMoveTo(curX + x, curY) && canMoveTo(curX + x + getWidth(), curY)) {
             curX += x;
         }
     }
 
 
     public void applyY(int y) {
-        if (canMoveTo(curX, curY + y)) {
+        if (canMoveTo(curX, curY + y) && canMoveTo(curX, curY + y + getHeight())) {
             curY += y;
         }
     }
 
     public void applyGravity() {
-        var newVal = curY + 4;
-        if (canMoveTo(curX, newVal)) {
-            curY += 4;
-        }
+//        var newY = curY - 4;
+//        if (canMoveTo(curX, newY) && canMoveTo(curX, newY - getHeight()))
+//            curY += 4;
+        applyY(4);
     }
 }

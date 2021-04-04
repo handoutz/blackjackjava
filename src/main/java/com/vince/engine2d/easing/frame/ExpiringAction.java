@@ -4,6 +4,7 @@ import com.vince.engine2d.FrameListener;
 import com.vince.engine2d.GameEngine;
 import com.vince.engine2d.actor.Actor;
 import com.vince.engine2d.layers.FrontLayer;
+import com.vince.engine2d.physics.PhysicsFrame;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,7 @@ public abstract class ExpiringAction implements FrameListener {
         return Math.abs(timeMs - (startTime+duration));
     }
 
-    public abstract void actOn(Actor actor, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, FrontLayer layer);
+    public abstract void actOn(Actor actor, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, FrontLayer layer, PhysicsFrame phys);
 
     @Override
     public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {

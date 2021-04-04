@@ -6,12 +6,14 @@ import com.vince.engine2d.GameEngine;
 import com.vince.engine2d.Position;
 import com.vince.engine2d.easing.frame.ExpiringAction;
 import com.vince.engine2d.layers.FrontLayer;
+import com.vince.engine2d.physics.PhysicsFrame;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 
 @Getter
@@ -25,6 +27,8 @@ public abstract class Actor extends Drawable implements FrameListener {
         super(x, y, width, height);
         actions = new ArrayList<>();
         position = new Position();
+        position.setX(x);
+        position.setY(y);
         this.layer = layer;
     }
 
@@ -40,8 +44,8 @@ public abstract class Actor extends Drawable implements FrameListener {
         actions.removeIf(a -> a.getId().equals(id));
     }
 
-    public ExpiringAction getActionById(String id){
-        return actions.stream().filter(a->a.getId().equals(id)).findFirst().get();
+    public Optional<ExpiringAction> getActionById(String id){
+        return actions.stream().filter(a->a.getId().equals(id)).findFirst();
     }
 
     public void addAction(ExpiringAction act) {
@@ -49,19 +53,21 @@ public abstract class Actor extends Drawable implements FrameListener {
             actions.add(act);
         }
     }
-
-    @Override
-    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
+    protected void runActions(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, PhysicsFrame phys){
         var removable = new ArrayList<ExpiringAction>();
         for (var action : actions) {
             if (action.isExpired(timeMs)) {
                 removable.add(action);
                 continue;
             }
-            action.actOn(this, frameNum, engine, timeMs, msSinceLastFrame, layer);
+            action.actOn(this, frameNum, engine, timeMs, msSinceLastFrame, layer, phys);
         }
         for (var expired : removable) {
             actions.remove(expired);
         }
+    }
+    @Override
+    public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
+
     }
 }

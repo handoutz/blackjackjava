@@ -11,19 +11,21 @@ import java.awt.event.KeyEvent;
 public class PlayerActor extends Actor {
 
     public PlayerActor(int x, int y, FrontLayer layer) {
-        super(x, y, 0, 0, layer);
+        super(x, y, 20, 20, layer);
     }
 
 
     @Override
     public void draw(Graphics2D g) {
         g.setColor(Color.ORANGE);
-        g.drawRect(getPosition().getX(), getPosition().getY(), 20, 20);
+        g.drawRect(getPosition().getX(), getPosition().getY(), getWidth(), getHeight());
     }
 
     @Override
     public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
         var phys = new PhysicsFrame(getPosition().getX(), getPosition().getY(), getLayer().getCurrentLevelImage(), getWidth(), getHeight());
+        phys.applyGravity();
+        super.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
         int xChange = 0, yChange = 0;
         int changeAmount = 2;
         var events = engine.getKeyEvents();
@@ -40,7 +42,7 @@ public class PlayerActor extends Actor {
                         break;
                     case KeyEvent.VK_UP:
                         //only jump if we're near the ground
-                        if (!phys.canMoveTo(phys.getCurX(), phys.getCurY() + 5)) {
+                        if (!phys.canMoveTo(phys.getCurX(), phys.getCurY() + 25)) {
                             addAction(new MovementAction(1000, timeMs, 0, -changeAmount * 3, "up"));
                         }
                         //yChange -= changeAmount;
@@ -60,26 +62,24 @@ public class PlayerActor extends Actor {
                         break;
                     case KeyEvent.VK_UP:
                         var oldAction = getActionById("up");
-                        if(oldAction.timeLeft(timeMs) > 500)
-                            oldAction.setDuration(500);
-                        else
-                        removeActionsById("up");
+                        if (oldAction.isPresent() && oldAction.get().timeLeft(timeMs) > 500) {
+                            oldAction.get().setDuration(500);
+                        } else {
+                            removeActionsById("up");
+                        }
                         //yChange -= changeAmount;
                         break;
                     case KeyEvent.VK_DOWN:
-                        //getActions().add(new MovementAction(100, timeMs, 0, changeAmount));
-                        //yChange += changeAmount;
                         break;
                 }
             }
         }
         /*phys.applyX(xChange);
         phys.applyY(yChange);*/
-        events.clear();
-        phys.applyGravity();
+        runActions(frameNum,engine,timeMs,msSinceLastFrame, phys);
         setXPosition(phys.getCurX());
         setYPosition(phys.getCurY());
-        super.acceptFrame(frameNum, engine, timeMs, msSinceLastFrame);
+        events.clear();
         //setXPosition(getPosition().getX() + xChange);
         //setYPosition(getPosition().getY() + yChange);
     }

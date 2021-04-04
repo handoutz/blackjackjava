@@ -16,8 +16,7 @@ public class MovementAction extends ExpiringAction {
     }
 
     @Override
-    public void actOn(Actor actor, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, FrontLayer layer) {
-        var phys = new PhysicsFrame(actor.getPosition().getX(), actor.getPosition().getY(), layer.getCurrentLevelImage(), actor.getWidth(), actor.getHeight());
+    public void actOn(Actor actor, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, FrontLayer layer, PhysicsFrame phys) {
         phys.applyX(xChangeFrame);
         phys.applyY(yChangeFrame);
 
