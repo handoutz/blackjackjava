@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -44,8 +45,8 @@ public abstract class Actor extends Drawable implements FrameListener {
         actions.removeIf(a -> a.getId().equals(id));
     }
 
-    public Optional<ExpiringAction> getActionById(String id){
-        return actions.stream().filter(a->a.getId().equals(id)).findFirst();
+    public Optional<ExpiringAction> getActionById(String id) {
+        return actions.stream().filter(a -> a.getId().equals(id)).findFirst();
     }
 
     public void addAction(ExpiringAction act) {
@@ -53,19 +54,34 @@ public abstract class Actor extends Drawable implements FrameListener {
             actions.add(act);
         }
     }
-    protected void runActions(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, PhysicsFrame phys){
+
+    private List<ExpiringAction> getActionsInOrder() {
+        var result = new ArrayList<ExpiringAction>();
+        result.addAll(actions.stream().filter(a -> a.getId().equals("up")).collect(Collectors.toList()));
+        result.addAll(actions.stream().filter(a -> !a.getId().equals("up")).collect(Collectors.toList()));
+        return result;
+    }
+
+    private boolean runAction(ExpiringAction action, List<ExpiringAction> removable, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, PhysicsFrame phys) {
+        if (action.isExpired(timeMs)) {
+            removable.add(action);
+            return false;
+        }
+        action.actOn(this, frameNum, engine, timeMs, msSinceLastFrame, layer, phys);
+        return true;
+    }
+
+    protected void runActions(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, PhysicsFrame phys) {
         var removable = new ArrayList<ExpiringAction>();
-        for (var action : actions) {
-            if (action.isExpired(timeMs)) {
-                removable.add(action);
-                continue;
-            }
-            action.actOn(this, frameNum, engine, timeMs, msSinceLastFrame, layer, phys);
+        var ordered = getActionsInOrder();
+        for (var action : ordered) {
+            runAction(action, removable, frameNum, engine, timeMs, msSinceLastFrame, phys);
         }
         for (var expired : removable) {
             actions.remove(expired);
         }
     }
+
     @Override
     public void acceptFrame(int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame) {
 

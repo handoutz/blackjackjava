@@ -1,5 +1,6 @@
 package com.vince.engine2d.physics;
 
+import com.vince.engine2d.actor.Actor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ public class PhysicsFrame {
     private final BufferedImage physMap;
 
     private int curX, curY;
+    private int origX, origY;
 
     private int width, height;
 
@@ -17,6 +19,8 @@ public class PhysicsFrame {
         this.physMap = img;
         this.curX = x;
         this.curY = y;
+        this.origX = x;
+        this.origY = y;
         this.width = width;
         this.height = height;
     }
@@ -38,22 +42,29 @@ public class PhysicsFrame {
     }
 
     public void applyX(int x) {
-        if (canMoveTo(curX + x, curY) && canMoveTo(curX + x + getWidth(), curY)) {
+        if (canMoveTo(curX + x, curY)) {
             curX += x;
         }
     }
 
-
     public void applyY(int y) {
-        if (canMoveTo(curX, curY + y) && canMoveTo(curX, curY + y + getHeight())) {
+        if (canMoveTo(curX, curY + y)) {
             curY += y;
         }
     }
 
+    public void applyToActor(Actor actor) {
+        if (!canMoveTo(curX, curY) || !canMoveTo(curX + getWidth(), curY)) {
+            curX = origX;
+        }
+        if (!canMoveTo(curX, curY) || !canMoveTo(curX, curY + getHeight())) {
+            curY = origY;
+        }
+        actor.setXPosition(curX);
+        actor.setYPosition(curY);
+    }
+
     public void applyGravity() {
-//        var newY = curY - 4;
-//        if (canMoveTo(curX, newY) && canMoveTo(curX, newY - getHeight()))
-//            curY += 4;
         applyY(4);
     }
 }

@@ -17,10 +17,11 @@ public class MovementAction extends ExpiringAction {
 
     @Override
     public void actOn(Actor actor, int frameNum, GameEngine engine, long timeMs, long msSinceLastFrame, FrontLayer layer, PhysicsFrame phys) {
+
         phys.applyX(xChangeFrame);
         phys.applyY(yChangeFrame);
 
-        actor.setXPosition(phys.getCurX());
-        actor.setYPosition(phys.getCurY());
+        //actor.setXPosition(phys.getCurX());
+        //actor.setYPosition(phys.getCurY());
     }
 }

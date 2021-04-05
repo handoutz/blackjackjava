@@ -19,6 +19,10 @@ public class PlayerActor extends Actor {
     public void draw(Graphics2D g) {
         g.setColor(Color.ORANGE);
         g.drawRect(getPosition().getX(), getPosition().getY(), getWidth(), getHeight());
+        g.setColor(Color.green);
+        g.drawRect(getPosition().getX(), getPosition().getY(), 2, 2);
+        g.setColor(Color.blue);
+        g.drawRect(getPosition().getX() + getWidth(), getPosition().getY() + getHeight(), 2, 2);
     }
 
     @Override
@@ -77,8 +81,9 @@ public class PlayerActor extends Actor {
         /*phys.applyX(xChange);
         phys.applyY(yChange);*/
         runActions(frameNum,engine,timeMs,msSinceLastFrame, phys);
-        setXPosition(phys.getCurX());
-        setYPosition(phys.getCurY());
+        phys.applyToActor(this);
+        /*setXPosition(phys.getCurX());
+        setYPosition(phys.getCurY());*/
         events.clear();
         //setXPosition(getPosition().getX() + xChange);
         //setYPosition(getPosition().getY() + yChange);
